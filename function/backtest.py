@@ -54,7 +54,7 @@ def backtest_strategy(signals, returns, plot_charts=False):
         'Performance DataFrame': df
     }
 
-    Plot the performance charts if requested
+    # Plot the performance charts if requested
     if plot_charts:
         plot_performance(df, drawdown)
     
