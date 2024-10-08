@@ -12,7 +12,7 @@ def fetch_stock_data(ticker, start_date, end_date):
         Function throws an error if ticker not found.
     """
     try:
-        data = yf.download(ticker, start=start_date, end=end_date)
+        data = yf.download(ticker, start=start_date, end=end_date, progress=False)
         if len(data) == 0:
             print(f"No data for {ticker}")
             return None
