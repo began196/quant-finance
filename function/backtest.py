@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib.ticker as mtick
 
 def backtest_strategy(signals, returns, plot_charts=False):
     """
@@ -26,7 +27,7 @@ def backtest_strategy(signals, returns, plot_charts=False):
     df['strategy_returns'].fillna(0, inplace=True)
 
     # Calculate cumulative returns
-    df['cumulative_returns'] = (1 + df['strategy_returns']).cumprod()
+    df['cumulative_returns'] = (df['strategy_returns']).cumsum()
 
     # Total Profit/Loss
     total_pnl = df['strategy_returns'].sum()
@@ -39,17 +40,17 @@ def backtest_strategy(signals, returns, plot_charts=False):
 
     # Max Drawdown
     cumulative_max = df['cumulative_returns'].cummax()
-    drawdown = (df['cumulative_returns'] - cumulative_max) / cumulative_max
+    drawdown = (df['cumulative_returns'] - cumulative_max) / cumulative_max * 100
     max_drawdown = drawdown.min()
 
     # Cumulative Return
-    cumulative_return = df['cumulative_returns'].iloc[-1] - 1
+    cumulative_return = df['cumulative_returns'].iloc[-1]
 
     # Create the results dictionary
     results = {
         'Total PnL': total_pnl,
         'Sharpe Ratio': sharpe_ratio,
-        'Max Drawdown': max_drawdown,
+        'Max Drawdown': max_drawdown / 100,
         'Cumulative Return': cumulative_return,
         'Performance DataFrame': df
     }
@@ -58,7 +59,7 @@ def backtest_strategy(signals, returns, plot_charts=False):
     if plot_charts:
         plot_performance(df, drawdown)
     
-    return results
+    return (df, results)
 
 def plot_performance(df, drawdown):
     """
@@ -81,6 +82,7 @@ def plot_performance(df, drawdown):
     ax2.plot(drawdown, label='Drawdown', color='red')
     ax2.set_title('Drawdown')
     ax2.set_ylabel('Drawdown (%)')
+    ax2.yaxis.set_major_formatter(mtick.PercentFormatter())
     ax2.grid(True)
     ax2.legend()
 
